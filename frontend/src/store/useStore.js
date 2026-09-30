@@ -4,6 +4,7 @@ import { localTZ } from '../lib/format.js'
 import { registerCustom } from '../lib/exercises.js'
 import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { MOBILE, nativeLoad, nativeSave, syncReminder } from '../lib/mobile.js'
+import { STANDALONE } from '../lib/standalone.js'
 
 const KEY = 'gym_state_v1'
 export const DEF = {
@@ -176,6 +177,12 @@ export const useStore = create((set, get) => {
           localStorage.setItem(DEMO_SEEDED, '1')
           await get().resetDemo()
         }
+        get().setGuest(true)
+        set({ ready: true })
+        return
+      }
+      // Standalone web build (Vercel etc.): no backend, so skip sign-in and stay in guest mode.
+      if (STANDALONE) {
         get().setGuest(true)
         set({ ready: true })
         return

@@ -130,6 +130,8 @@ mobile app is the install-and-done flavor.
 - **iPhone:** Apple doesn't allow installing apps outside the App Store, so there is no iOS
   download. Self-host and add it to your home screen from Safari (it's a full PWA), or build
   the native app onto your own device from Xcode — see **[docs/MOBILE.md](docs/MOBILE.md)**.
+  Prefer no server at all? Deploy the serverless build on **Vercel** and add that to your home
+  screen — data stays on the phone: **[docs/VERCEL.md](docs/VERCEL.md)**.
 
 ## How it works
 

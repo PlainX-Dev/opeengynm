@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Deploy on Vercel
+
+- 🌐 **A serverless web build.** `npm run build:vercel` produces a static, backend-free
+  "standalone" flavor: it opens straight into local guest mode (no sign-in screen), starts empty
+  instead of with demo data, and reads exercise media from the pinned jsDelivr dataset. A
+  `vercel.json` at the repo root wires it up, so importing the repo into Vercel needs no settings;
+  on iPhone it installs from Safari via Add to Home Screen. See [docs/VERCEL.md](docs/VERCEL.md).
+
 ### The AI Coach
 
 openGym could always progress a plan. It could never *write* one, and it never looked at the
