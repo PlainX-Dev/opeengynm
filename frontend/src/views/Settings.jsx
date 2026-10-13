@@ -7,6 +7,7 @@ import { effortOf } from '../lib/history.js'
 import { webauthnOK, passkeyLogin, passkeyRegister, IS_ANDROID } from '../lib/api.js'
 import { pushSupported, enablePush, disablePush, sendTestPush } from '../lib/push.js'
 import { wakeLockSupported } from '../lib/wakelock.js'
+import { useNowPlayingStatus, nowPlayingSupported } from '../lib/nowplaying.js'
 import { t, LANGS, INSTR_LANGS } from '../lib/i18n.js'
 import { DEMO, REPO } from '../lib/demo.js'
 import { MOBILE, shareExport, syncReminder } from '../lib/mobile.js'
@@ -27,6 +28,7 @@ export default function Settings() {
   const fileRef = useRef(null)
   const importRef = useRef(null)
   const wakeOK = wakeLockSupported()
+  const npStatus = useNowPlayingStatus()
 
   const doExport = async () => {
     const json = JSON.stringify(S, null, 2)
@@ -134,6 +136,19 @@ export default function Settings() {
       <Row icon="bell" iconTint="var(--pink)" title={t('Sounds')}>
         <Switch checked={!!S.sound} onChange={v => update(s => { s.sound = v })} />
       </Row>
+      {/* Experiment: Lock Screen / Dynamic Island via Now Playing (src/lib/nowplaying.js). */}
+      <SelectRow icon="timer" iconTint="var(--blue)" title={t('Lock screen display (experimental)')}
+        value={S.nowPlaying || 'off'} onChange={v => update(s => { s.nowPlaying = v })}
+        options={[
+          { value: 'off', label: t('Off') },
+          { value: 'playback', label: t('On — pauses other music'), subtitle: t('Most likely to show in the Dynamic Island.') },
+          { value: 'mix', label: t('On — plays alongside music'), subtitle: t('Keeps your music going, but iOS may not show it.') },
+        ]} />
+      {(S.nowPlaying === 'playback' || S.nowPlaying === 'mix') && (
+        <Row icon="info" iconTint="var(--grey)" title={t('Display status')}
+          subtitle={t('Shows the exercise, the set and the rest countdown on the lock screen while a workout runs. ◀◀ takes 15 s off the rest, ▶▶ adds 15 s.')}
+          value={!nowPlayingSupported() ? t('Not supported') : npStatus === 'playing' ? t('Active') : npStatus === 'blocked' ? t('Tap anywhere to start') : t('Starts with a workout')} />
+      )}
       {/* Two names for the same judgement, so the column asks in the scale you already think in.
           The (i) sits before the control — you read it on the way to the choice, not after it. */}
       <Row icon="target" iconTint="var(--purple)" title={t('Effort per set')}>

@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Lock-screen workout display (experiment)
+
+- 🧪 **Settings → During a workout → Lock screen display.** Off by default. While a workout runs it
+  plays a silent track and fills in iOS/Android *Now Playing*, so the exercise, the set (3/4) and the
+  rest countdown appear on the Lock Screen and — on iPhones with one — in the Dynamic Island. ◀◀/▶▶
+  on the lock screen take 15 s off / add 15 s. Two modes: *pauses other music* (most likely to show)
+  and *plays alongside music* (may not show). A web page can't start a real Live Activity; that needs
+  a native iOS app. See `src/lib/nowplaying.js`.
+
 ### Deploy on Vercel
 
 - 🌐 **A serverless web build.** `npm run build:vercel` produces a static, backend-free

@@ -7,6 +7,7 @@ import { ACCENTS } from './lib/format.js'
 import { setLang, useLang } from './lib/i18n.js'
 import { setNav } from './lib/nav.js'
 import { useWakeLock } from './lib/wakelock.js'
+import { initNowPlaying } from './lib/nowplaying.js'
 import { startFlow } from './sheets.jsx'
 import Icon from './components/Icon.jsx'
 import TabBar from './components/TabBar.jsx'
@@ -28,6 +29,7 @@ import Coach from './views/Coach.jsx'
 import CoachIntake from './views/CoachIntake.jsx'
 import CoachProposal from './views/CoachProposal.jsx'
 
+initNowPlaying(useStore, useUI)   // lock-screen / Dynamic Island display (opt-in experiment)
 bindUI(useUI)   // lets the shared controls open sheets without importing the store at module scope
 
 function applyPrefs(theme, accent) {
