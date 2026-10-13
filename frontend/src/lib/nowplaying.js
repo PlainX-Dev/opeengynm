@@ -16,7 +16,7 @@
 // is nothing to keep in sync — `describe()` is a pure function of it.
 import { useSyncExternalStore } from 'react'
 import { t } from './i18n.js'
-import { exOr } from './exercises.js'
+import { exOr, imgSrc } from './exercises.js'
 
 const MAX_TRACK = 900   // seconds; a silent 8-bit/8 kHz WAV is 8 kB per second
 
@@ -40,17 +40,19 @@ export function describe(S, timer, work) {
   const setNo = si < 0 ? entry.sets.length : si + 1
   const artist = [t('Set {0}/{1}', setNo, entry.sets.length), ex.eq].filter(Boolean).join(' · ')
   const album = A.name || 'openGym'
+  // The exercise's still frame as cover art. Custom exercises have none — the app icon stands in.
+  const img = ex.img ? imgSrc(ex) : null
   if (work) return {
-    title: t('Hold') + ' · ' + (work.label || ex.n), artist, album,
+    title: t('Hold') + ' · ' + (work.label || ex.n), artist, album, img,
     track: { total: work.total, elapsed: work.total - work.left },
-    key: ['w', work.label, work.total, work.endsAt, artist].join('|'),
+    key: ['w', work.label, work.total, work.endsAt, artist, img].join('|'),
   }
   if (timer) return {
-    title: t('Rest') + ' → ' + ex.n, artist, album,
+    title: t('Rest') + ' → ' + ex.n, artist, album, img,
     track: { total: timer.total, elapsed: timer.total - timer.left },
-    key: ['r', ex.n, timer.total, timer.endsAt, artist].join('|'),
+    key: ['r', ex.n, timer.total, timer.endsAt, artist, img].join('|'),
   }
-  return { title: ex.n, artist, album, track: null, key: ['i', ex.n, artist].join('|') }
+  return { title: ex.n, artist, album, img, track: null, key: ['i', ex.n, artist, img].join('|') }
 }
 
 /* ---------- silent audio ---------- */
@@ -66,6 +68,14 @@ function silentWav(sec) {
   str(36, 'data'); v.setUint32(40, n, true)
   new Uint8Array(buf, 44).fill(0x80)
   return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
+}
+
+// Cover art for the lock screen. The system fetches it itself, so it needs an absolute URL.
+function artwork(img) {
+  const abs = src => { try { return new URL(src, document.baseURI).href } catch (e) { return src } }
+  if (!img) return { src: abs('icon-512.png'), sizes: '512x512', type: 'image/png' }
+  const png = /\.png(\?|$)/i.test(img)
+  return { src: abs(img), type: png ? 'image/png' : 'image/jpeg' }
 }
 
 /* ---------- controller ---------- */
@@ -143,7 +153,7 @@ function apply(S, ui) {
   else if (d.track) { try { audio.currentTime = Math.min(d.track.elapsed, len) } catch (e) { /* */ } }
   if (audio.paused && audio.readyState >= 1) play()
 
-  const art = [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
+  const art = [artwork(d.img)]
   try {
     navigator.mediaSession.metadata = new MediaMetadata({ title: d.title, artist: d.artist, album: d.album, artwork: art })
     navigator.mediaSession.playbackState = 'playing'

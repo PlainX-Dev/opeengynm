@@ -7,6 +7,11 @@ const entry = (done, extra = {}) => ({ id: ex.id, sets: done.map(d => ({ done: d
 const S = (entries, cur = 0) => ({ active: { name: 'Push', cur, entries } })
 
 suite('now-playing description', () => {
+  it('uses the exercise still as cover art, and nothing for a custom exercise', () => {
+    expect(describe(S([entry([false])]), null, null).img).toMatch(/\.(jpg|png)/)
+    expect(describe(S([{ id: 'gone', sets: [{ done: false }] }]), null, null).img).toBe(null)
+  })
+
   it('says nothing without an active workout', () => {
     expect(describe({ active: null }, null, null)).toBe(null)
     expect(describe(S([]), null, null)).toBe(null)
